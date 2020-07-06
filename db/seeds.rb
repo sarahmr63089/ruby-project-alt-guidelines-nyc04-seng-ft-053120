@@ -18,7 +18,7 @@ end
 # t.integer "profit"
 def create_franchises
   8.times do 
-    Franchise.create(company_id: Company.all.sample.id, owner_id: Owner.all.sample.id, location: Faker::Address.city, profit: Faker::Number.within(range = -1000.00..1000000.00))
+    Franchise.create(company_id: Company.all.sample.id, owner_id: Owner.all.sample.id, location: Faker::Address.city, profit: Faker::Number.within(range: -1000.00..1000000.00))
   end
 end
 
