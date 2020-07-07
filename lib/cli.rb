@@ -59,3 +59,14 @@ class CLI
     puts "Franchise #{big_earner.id} has the highest profit, having earned #{big_earner.profit}. It is owned by #{big_earner.owner.name} with parent company #{big_earner.company.name}."
   end
 end
+
+
+puts "Welcome to the Franchise Infomatic!"
+
+ActiveRecord::Base.logger = nil
+
+cli = CLI.new
+
+company = cli.get_company
+
+cli.change_franchise_owner(company)
