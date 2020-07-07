@@ -110,18 +110,47 @@ class CLI
 
 
 
+  def get_company
+    puts "Please enter your company name:"
+    company_name = gets.strip
 
+    company = Company.find_by(name: company_name)
+    if company == nil
+      puts "Please provide a username and password."
+      puts "Username:"
+      username = gets.strip
+      puts "Password:"
+      password = gets.strip
+      company = Company.create({ :name => company_name, :password => password, :username => username })
+    end
 
+    if get_username_and_test_validity(company)
+      if get_password_and_test_validity(company)
+      else 
+        puts "That is not the correct password, please try again."
+        return
+      end
+    else 
+      puts "That is not the correct username, please try again."
+      return
+    end
 
+    company
+  end
 
+  def get_username_and_test_validity(company)
+    puts "Please enter your username:"
+    username = gets.strip
+    # is this valid?
+    company.username == username
+  end
 
+  def get_password_and_test_validity(company)
+    puts "Please enter your password:"
+    password = gets.strip
 
-
-
-
-
-
-
+    company.password == password
+  end
 
   def run
     puts "Welcome to the Franchise Infomatic!"
