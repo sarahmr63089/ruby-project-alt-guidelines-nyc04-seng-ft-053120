@@ -3,8 +3,12 @@ class CLI
   def get_company
     puts "Please enter your company name:"
     company_name = gets.strip
-    # if company doesn't exist create new company -- snag from Jacie's create method
+
     company = Company.find_by(name: company_name)
+    if company == nil
+      company = Company.create({ :name => company_name })
+    end
+    company
   end
   
   # this method finds and displays the franchises owned by the user-company
@@ -15,7 +19,6 @@ class CLI
 
   # this method checks if the user-company owns the franchise with the given id
   def valid_franchise_choice(company, id)
-    # to be a valid choice, the franchise must be one owned by the company
     if !company.franchises.exists?(id)
       puts "Please select an id from the list above next time or find an owner to purchase a franchise!" 
     end
@@ -56,17 +59,75 @@ class CLI
   # this method shows the highest-earning franchise
   def franchise_with_highest_profit
     big_earner = Franchise.all.max_by { |franchise| franchise.profit }
-    puts "Franchise #{big_earner.id} has the highest profit, having earned #{big_earner.profit}. It is owned by #{big_earner.owner.name} with parent company #{big_earner.company.name}."
+    puts "Franchise #{big_earner.id} has the highest profit, having earned $#{big_earner.profit}. It is owned by #{big_earner.owner.name} with parent company #{big_earner.company.name}."
+  end
+
+  #create a new franchise
+  def create_franchise(company)
+    puts "Please enter Owner name:"
+    owner_name = gets.chomp
+    owner = Owner.find_by name: owner_name
+    if owner == nil
+      owner = Owner.create({ :name => owner_name })
+    end
+    # ask for location
+    puts "What is the location?"
+    location = gets.chomp
+
+    Franchise.create({ 
+      :profit => 0, 
+      :location => location, 
+      :owner_id => owner.id,
+      :company_id => company.id
+    })
+
+    puts "Complete!"
+  end
+
+  def owner_and_franchises
+    puts "Please enter owner name to see franchises:"
+    owner_name = gets.chomp
+    owner = Owner.find_by name: owner_name
+    franchise = Franchise.find_by owner_id: owner.id
+    company = Company.find_by id: franchise.company_id
+  
+    puts "This owner owns franchise #{franchise.id} in #{franchise.location},
+    with parent company #{company.name}."
+  end
+
+  #enter location to see profit
+  def location
+    puts "Please enter location to see profit:"
+    franchise_location = gets.chomp
+    franchise = Franchise.find_by location: franchise_location
+    puts "This location's profit is $#{franchise.profit}."
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  def run
+    puts "Welcome to the Franchise Infomatic!"
+
+    company = get_company
+
+    # menu
   end
 end
-
-
-puts "Welcome to the Franchise Infomatic!"
-
-ActiveRecord::Base.logger = nil
-
-cli = CLI.new
-
-company = cli.get_company
-
-cli.change_franchise_owner(company)
