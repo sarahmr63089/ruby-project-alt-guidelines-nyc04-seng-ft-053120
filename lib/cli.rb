@@ -1,14 +1,19 @@
 class CLI
+  # this method gets or creates the user-company
   def get_company
-    puts "Please enter your company name"
-    company_name = gets.strip.to_s
+    puts "Please enter your company name:"
+    company_name = gets.strip
+    # if company doesn't exist create new company -- snag from Jacie's create method
     company = Company.find_by(name: company_name)
   end
   
+  # this method finds and displays the franchises owned by the user-company
   def display_franchises(company)
+    puts "#{company.name} owns these franchises:"
     company.franchises.select { |franchise| puts "Franchise #{franchise.id} in #{franchise.location}" }
   end
 
+  # this method checks if the user-company owns the franchise with the given id
   def valid_franchise_choice(company, id)
     # to be a valid choice, the franchise must be one owned by the company
     if !company.franchises.exists?(id)
@@ -17,40 +22,39 @@ class CLI
     end
   end
   
+  # this method changes the owner of an existing franchise that belongs to the user-company
   def change_franchise_owner(company)
-    # get company name and display franchises
     display_franchises(company)
-    # ask which franchise to change owner
     puts "Please enter the id number for the franchise whose ownership has changed."
-    # get input
     id = gets.strip
-    # is this a valid choice?
+    # is this a valid choice? -- method needs finishing
     valid_franchise_choice(company, id)
-    # ask for owner name
+
     puts "Please enter the name of the new owner."
-    # get input
-    new_owner = gets.strip.to_s
-    # update owner
+    new_owner = gets.strip
+    if !Owner.exists?(name: new_owner)
+      Owner.create(name: new_owner)
+    end
+
     franchise = Franchise.where(id: id).update(owner_id: Owner.find_by(name: new_owner).id)
-    # display change
     franchise.select { |franchise| puts "Franchise #{franchise.id} has new owner #{franchise.owner.name}." }
   end
-  
+
+  # this method closes an franchise that belongs to the user-company
   def delete_franchise(company)
-    # get company name and display franchises
     display_franchises(company)
-    # ask which franchise
     puts "Please enter the id number for the franchise you would like to close."
-    # get franchise id input
     id = gets.strip
     # valid choice?
     valid_franchise_choice(company, id)
-    # delete the franchise they choose
+
     Franchise.find(id).destroy
+    puts "Franchise #{id} has been closed."
   end
   
+  # this method shows the highest-earning franchise
   def franchise_with_highest_profit
     big_earner = Franchise.all.max_by { |franchise| franchise.profit }
-    puts "Franchise #{big_earner.id} has the highest profit, having earned #{big_earner.profit}. It is owned by #{big_earner.owner.name} and the company #{big_earner.company.name}."
+    puts "Franchise #{big_earner.id} has the highest profit, having earned #{big_earner.profit}. It is owned by #{big_earner.owner.name} with parent company #{big_earner.company.name}."
   end
 end
