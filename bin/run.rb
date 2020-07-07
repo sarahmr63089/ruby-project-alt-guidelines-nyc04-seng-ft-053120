@@ -47,4 +47,3 @@ def location
     franchise = Franchise.find_by location: franchise_location
     puts "This location's profit is #{franchise.profit}"
 end
-
