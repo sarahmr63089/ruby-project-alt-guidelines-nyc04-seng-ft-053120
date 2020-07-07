@@ -17,8 +17,7 @@ class CLI
   def valid_franchise_choice(company, id)
     # to be a valid choice, the franchise must be one owned by the company
     if !company.franchises.exists?(id)
-      puts "Please select an id from the list above next time or find an owner to purchase a franchise!"
-      # return to menu
+      puts "Please select an id from the list above next time or find an owner to purchase a franchise!" 
     end
   end
   
@@ -28,16 +27,18 @@ class CLI
     puts "Please enter the id number for the franchise whose ownership has changed."
     id = gets.strip
     # is this a valid choice? -- method needs finishing
-    valid_franchise_choice(company, id)
+    if !valid_franchise_choice(company, id)
+      return 
+    else 
+      puts "Please enter the name of the new owner."
+      new_owner = gets.strip
+      if !Owner.exists?(name: new_owner)
+        Owner.create(name: new_owner)
+      end
 
-    puts "Please enter the name of the new owner."
-    new_owner = gets.strip
-    if !Owner.exists?(name: new_owner)
-      Owner.create(name: new_owner)
+      franchise = Franchise.where(id: id).update(owner_id: Owner.find_by(name: new_owner).id)
+      franchise.select { |franchise| puts "Franchise #{franchise.id} has new owner #{franchise.owner.name}." }
     end
-
-    franchise = Franchise.where(id: id).update(owner_id: Owner.find_by(name: new_owner).id)
-    franchise.select { |franchise| puts "Franchise #{franchise.id} has new owner #{franchise.owner.name}." }
   end
 
   # this method closes an franchise that belongs to the user-company
