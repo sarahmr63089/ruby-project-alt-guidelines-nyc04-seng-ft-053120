@@ -1,19 +1,27 @@
 class CLI  
-  # this method gets or creates the user-company -- revise get company to just get company name, separate method for u&p validation, separate method for create a new company
+  # this method gets company name and finds it in database
   def get_company
     puts "Please enter your company name:"
     company_name = gets.strip
 
     company = Company.find_by(name: company_name)
-    if company == nil
-      puts "Please provide a username and password."
-      puts "Username:"
-      username = gets.strip
-      puts "Password:"
-      password = gets.strip
-      company = Company.create({ :name => company_name, :password => password, :username => username })
-    end
+    company
+  end
 
+  # this method creates a new company
+  def create_new_company
+    puts "Please provide a username and password."
+    puts "Username:"
+    username = gets.strip
+
+    puts "Password:"
+    password = gets.strip
+
+    company = Company.create({ :name => company_name, :password => password, :username => username })
+  end
+  # this method checks if the username and password provided are correct
+  def username_and_password_check
+    company = get_company
     if get_username_and_test_validity(company)
       if get_password_and_test_validity(company)
       else 
@@ -27,6 +35,7 @@ class CLI
     company
   end
 
+  # next two return true or false based on input
   def get_username_and_test_validity(company)
     prompt = TTY::Prompt.new
     username = prompt.ask("Please enter your username:")
@@ -45,12 +54,9 @@ class CLI
     company.franchises.select { |franchise| puts "Franchise #{franchise.id} in #{franchise.location}" }
   end
 
-  # this method checks if the user-company owns the franchise with the given id
-  # this method was rejecting existing franchises in testing, reconfigure to boolean
+  # this method returns true if the company owns the provided franchise
   def valid_franchise_choice(company, id)
-    if !company.franchises.exists?(id)
-      puts "Please select an id from the list above next time or find an owner to purchase a franchise!" 
-    end
+    company.franchises.exists?(id)
   end
 
   # this method changes the owner of an existing franchise that belongs to the user-company
@@ -59,10 +65,8 @@ class CLI
     display_franchises(company)
     puts "Please enter the id number for the franchise whose ownership has changed."
     id = gets.strip
-    # is this a valid choice? -- reconfigure this method
-    if !valid_franchise_choice(company, id)
-      return 
-    else 
+    # is this a valid choice?
+    if valid_franchise_choice(company, id) 
       puts "Please enter the name of the new owner."
       new_owner = gets.strip
       if !Owner.exists?(name: new_owner)
@@ -71,6 +75,9 @@ class CLI
 
       franchise = Franchise.where(id: id).update(owner_id: Owner.find_by(name: new_owner).id)
       franchise.select { |franchise| puts "Franchise #{franchise.id} has new owner #{franchise.owner.name}." }
+    else
+      puts "Please select an id from the list above next time or find an owner to purchase a franchise!" 
+      return 
     end
   end
 
@@ -87,10 +94,11 @@ class CLI
     puts "Franchise #{id} has been closed."
   end
 
-  # this method shows the highest-earning franchise -- reconfigure to show highest earning franchise for the company-user
+  # this method shows the highest-earning franchise owned by the user-company
   def franchise_with_highest_profit
-    big_earner = Franchise.all.max_by { |franchise| franchise.profit }
-    puts "Franchise #{big_earner.id} has the highest profit, having earned $#{big_earner.profit}. It is owned by #{big_earner.owner.name} with parent company #{big_earner.company.name}."
+    company = get_company
+    big_earner = company.franchises.max_by { |franchise| franchise.profit }
+    puts "Franchise #{big_earner.id} has the highest profit, having earned $#{big_earner.profit}."
   end
 
   #create a new franchise
@@ -161,7 +169,7 @@ class CLI
   def run
     puts "Welcome to the Franchise Infomatic!"
 
-    company = get_company
+    # company = get_company
 
     # menu
   end
