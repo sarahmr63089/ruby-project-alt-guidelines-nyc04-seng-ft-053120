@@ -5,32 +5,42 @@ class CLI
     company_name = gets.strip
 
     company = Company.find_by(name: company_name)
+    if company == nil
+      puts "Unfortunately, your company doesn't exist in our database. Please reboot the program and choose create a company account."
+      exit
+    end
     company
   end
 
   # this method creates a new company
   def create_new_company
-    puts "Please provide a username and password."
-    puts "Username:"
-    username = gets.strip
+    puts "Please enter your company name:"
+    company_name = gets.strip
 
-    puts "Password:"
-    password = gets.strip
+    prompt = TTY::Prompt.new
+    puts "Please provide a username and password."
+    username = prompt.ask("Username:")
+
+    password = prompt.mask("Password:")
 
     company = Company.create({ :name => company_name, :password => password, :username => username })
   end
+
   # this method checks if the username and password provided are correct
   def username_and_password_check
     company = get_company
+    if company == nil
+      exit
+    end
     if get_username_and_test_validity(company)
       if get_password_and_test_validity(company)
-      else 
+      else
         puts "That is not the correct password, please try again."
-        return
+        exit 
       end
     else 
       puts "That is not the correct username, please try again."
-      return
+      exit
     end
     company
   end
@@ -77,8 +87,9 @@ class CLI
       franchise.select { |franchise| puts "Franchise #{franchise.id} has new owner #{franchise.owner.name}." }
     else
       puts "Please select an id from the list above next time or find an owner to purchase a franchise!" 
-      return 
+      menu
     end
+    menu
   end
 
   # this method closes an franchise that belongs to the user-company
@@ -92,13 +103,16 @@ class CLI
 
     Franchise.find(id).destroy
     puts "Franchise #{id} has been closed."
+    menu
   end
 
   # this method shows the highest-earning franchise owned by the user-company
+  # what if they don't own any franchises?
   def franchise_with_highest_profit
     company = get_company
     big_earner = company.franchises.max_by { |franchise| franchise.profit }
     puts "Franchise #{big_earner.id} has the highest profit, having earned $#{big_earner.profit}."
+    menu
   end
 
   #create a new franchise
@@ -123,17 +137,28 @@ class CLI
     })
 
     puts "Complete!"
+    menu
   end
 
   def owner_and_franchises
     puts "Please enter owner name to see franchises:"
     owner_name = gets.chomp
     owner = Owner.find_by name: owner_name
+    if owner == nil
+      puts "It looks like that owner doesn't exist in our system. Please enter a different owner or create a new franchise with this owner."
+      menu
+    end
+
     franchise = Franchise.find_by owner_id: owner.id
+    if franchise == nil
+      puts "This owner doesn't have any franchises."
+      menu
+    end
     company = Company.find_by id: franchise.company_id
   
     puts "This owner owns franchise #{franchise.id} in #{franchise.location},
     with parent company #{company.name}."
+    menu
   end
 
   #enter location to see profit
@@ -141,7 +166,12 @@ class CLI
     puts "Please enter location to see profit:"
     franchise_location = gets.chomp
     franchise = Franchise.find_by location: franchise_location
+    if franchise == nil
+      puts "There aren't any franchises in this location."
+      menu
+    end
     puts "This location's profit is $#{franchise.profit}."
+    menu
   end
 
   def search(prompt)
@@ -149,7 +179,7 @@ class CLI
       {"By Owner"=> -> do owner_and_franchises end},
       {"By Location"=> -> do location end }, 
       {"Franchise with highest profit"=> -> do franchise_with_highest_profit end}, 
-      {"Exit" => -> do exit end}
+      {"Exit" => -> do exit_message end}
     ]
     prompt.select('What would you like to search for?', lookup_options)
   end
@@ -161,37 +191,29 @@ class CLI
       {"Delete Franchise"=> -> do delete_franchise end }, 
       {"Change Owner of Franchise"=> -> do change_franchise_owner end}, 
       {"Search"=> -> do search(prompt) end},
-      {"Exit" => -> do exit end}
+      {"Exit" => -> do exit_message end}
     ]
     prompt.select('What do you want to do?', menu_options)
   end
 
+  def exit_message
+    puts "Thank you for using the Franchise Infomatic!"
+    exit
+  end
+
+  def entry_menu
+    prompt = TTY::Prompt.new
+
+    menu_options = [
+      {"Sign in" => -> do username_and_password_check end },
+      {"Create an Account" => -> do create_new_company end }
+    ]
+    prompt.select("Sign in or create an account?", menu_options)
+  end
+
   def run
     puts "Welcome to the Franchise Infomatic!"
-
-    # company = get_company
-
-    # menu
+    entry_menu
+    menu
   end
 end
-
-
-# def menu
-#   prompt = TTY::Prompt.new
-#   menu_options = [
-#     {"Create Franchise"=> -> do create_franchise end},
-#     # {"Delete Franchise"}, 
-#     # {"Change Owner of Franchise"}, 
-#     # {"Search"},
-#     # {"Exit" =}
-#   ]
-#   #main_menu= %w(Create Franchise,Delete Franchise,Change Owner of Franchise,Lookup)
-#   prompt.select('What do you want to do?', menu_options)
-#   #if statement if they choose lookup to then ask what they want
-#   #to look up.
-#     # if prompt.select == lookup  
-#     # lookup = 
-#     # prompt.multi_select("What would you like to Lookup", choices)
-#     # lookup_options = ["By Owner", "By Location,","Franchise with highest profit"]
-#     # prompt.select('What would you like to search for?', lookup_option)
-#   end

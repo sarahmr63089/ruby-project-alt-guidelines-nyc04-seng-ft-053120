@@ -4,3 +4,5 @@ ActiveRecord::Base.logger = nil
 
 cli = CLI.new
 
+cli.run
+
