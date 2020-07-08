@@ -352,16 +352,14 @@ class CLI
   end
 
   def get_username_and_test_validity(company)
-    puts "Please enter your username:"
-    username = gets.strip
-    # is this valid?
+    prompt = TTY::Prompt.new
+    username = prompt.ask("Please enter your username:")
     company.username == username
   end
 
   def get_password_and_test_validity(company)
-    puts "Please enter your password:"
-    password = gets.strip
-
+    prompt = TTY::Prompt.new
+    password = prompt.mask("Please enter your password:")
     company.password == password
   end
 
