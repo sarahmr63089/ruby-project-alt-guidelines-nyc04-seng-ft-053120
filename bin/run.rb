@@ -1,5 +1,11 @@
 require 'pry'
 require_relative '../config/environment'
+ActiveRecord::Base.logger = nil
+
+cli = CLI.new
+
+cli.run
+=======
 #cli = CLI.new
 #create a new franchise
 def create_franchise
@@ -144,3 +150,4 @@ def menu
 #company = cli.get_company
 
 #cli.change_franchise_owner(company)
+

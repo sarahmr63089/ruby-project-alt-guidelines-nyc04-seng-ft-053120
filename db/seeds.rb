@@ -1,7 +1,7 @@
 # t.string "name"
 def create_companies
   8.times do 
-    Company.create(name: Faker::Company.unique.name)
+    Company.create(name: Faker::Company.unique.name, username: Faker::Alphanumeric.alpha(number: 6), password: Faker::Alphanumeric.alphanumeric(number: 6))
   end
 end
 
