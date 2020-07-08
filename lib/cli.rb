@@ -6,7 +6,7 @@ class CLI
 
     company = Company.find_by(name: company_name)
     if company == nil
-      puts "Unfortunately, your company doesn't exist in our database. Please reboot the program and choose create a company account."
+      puts "Unfortunately, your company doesn't exist in our database. Please reboot the program and choose create an account."
       exit
     end
     company
@@ -35,14 +35,13 @@ class CLI
     if get_username_and_test_validity(company)
       if get_password_and_test_validity(company)
       else
-        puts "That is not the correct password, please try again."
+        puts "That is not the correct password, please restart the program and try again."
         exit 
       end
     else 
-      puts "That is not the correct username, please try again."
+      puts "That is not the correct username, please restart the program and try again."
       exit
     end
-    company
   end
 
   # next two return true or false based on input
@@ -64,6 +63,14 @@ class CLI
     company.franchises.select { |franchise| puts "Franchise #{franchise.id} in #{franchise.location}" }
   end
 
+  # this method checks if the provided company owns any franchises
+  def no_franchises(company)
+    if company.franchises.count == 0
+      puts "Your company doesn't own any franchises! Please create a franchise or try a different task."
+      menu
+    end
+  end
+
   # this method returns true if the company owns the provided franchise
   def valid_franchise_choice(company, id)
     company.franchises.exists?(id)
@@ -72,10 +79,11 @@ class CLI
   # this method changes the owner of an existing franchise that belongs to the user-company
   def change_franchise_owner
     company = get_company
+    no_franchises(company)
     display_franchises(company)
     puts "Please enter the id number for the franchise whose ownership has changed."
     id = gets.strip
-    # is this a valid choice?
+    
     if valid_franchise_choice(company, id) 
       puts "Please enter the name of the new owner."
       new_owner = gets.strip
@@ -95,21 +103,25 @@ class CLI
   # this method closes an franchise that belongs to the user-company
   def delete_franchise
     company = get_company
+    no_franchises(company)
     display_franchises(company)
     puts "Please enter the id number for the franchise you would like to close."
     id = gets.strip
-    # valid choice?
-    valid_franchise_choice(company, id)
-
-    Franchise.find(id).destroy
-    puts "Franchise #{id} has been closed."
+    
+    if valid_franchise_choice(company, id)
+      Franchise.find(id).destroy
+      puts "Franchise #{id} has been closed."
+    else
+      puts "You can't close a franchise you don't own."
+      menu
+    end
     menu
   end
 
   # this method shows the highest-earning franchise owned by the user-company
-  # what if they don't own any franchises?
   def franchise_with_highest_profit
     company = get_company
+    no_franchises(company)
     big_earner = company.franchises.max_by { |franchise| franchise.profit }
     puts "Franchise #{big_earner.id} has the highest profit, having earned $#{big_earner.profit}."
     menu
@@ -140,6 +152,7 @@ class CLI
     menu
   end
 
+  # this method shows the franchises owned by an user-supplied owner
   def owner_and_franchises
     puts "Please enter owner name to see franchises:"
     owner_name = gets.chomp
