@@ -1,4 +1,4 @@
-#Welcome to the Franchise Infomatic!
+**Welcome to the Franchise Infomatic**
 ##This app was created to help companies manage their franchises and research their current owners. They are also able to open new franchises as well. 
 ================================================
 ## Table of contents
