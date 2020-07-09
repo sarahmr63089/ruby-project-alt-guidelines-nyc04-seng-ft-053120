@@ -20,7 +20,7 @@ This app was created to help companies manage their franchises and research thei
 ### **How to install the app**
 1. Open the repository in github: https://github.com/sarahmr63089/ruby-project-alt-guidelines-nyc04-seng-ft-053120
 2. Click on the green code button.
-3. Copy and paste the link
+3. Copy and paste the link.
 4. Go to your computers terminal and make sure you are in the correct directory.
 5. Git clone the file. 
 
