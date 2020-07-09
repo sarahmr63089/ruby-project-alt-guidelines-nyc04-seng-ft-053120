@@ -43,12 +43,17 @@ This app was created to help companies manage their franchises and research thei
 
 
 ### **What Infomatic looks like:**
-1. **Step 1:** Create an account by entering Company name. To choose this option use the arrow up and arrow down keys. Hit enter to select one of the options.
+1. **Step 1:** Create an account by entering Company name. To choose this option use the down arrow keys. Hit enter to select that option.
+![alt text](https://user-images.githubusercontent.com/60910329/87100857-6c979380-c21b-11ea-865b-e20a4f4c4e9d.png)
 
 
 2. **Step 2:** Enter your new Username. Hit enter and the second prompt will ask you to enter your Password. Once that is complete hit enter.
+![alt text](https://user-images.githubusercontent.com/60910329/87100859-6c979380-c21b-11ea-990a-42e680529fde.png)
 
 3. **Step 3:**  You will be brought to the main screen. Use the arrow keys to highlight what you want to select. Hit enter to make a selection.
 
+![alt text](https://user-images.githubusercontent.com/60910329/87100856-6c979380-c21b-11ea-8bb8-bdeae0ba196d.png)
+
 4. **Step 4:** Once you have completed all the tasks you are intested in, select 'Exit'. When you select the 'Exit' menu option you will see the message "Thank you for using the Franchise Infomatic!"
 
+![alt text](https://user-images.githubusercontent.com/60910329/87100855-6bfefd00-c21b-11ea-8003-66ee19fb000b.png)
