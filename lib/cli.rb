@@ -6,7 +6,8 @@ class CLI
 
     company = Company.find_by(name: company_name)
     if company == nil
-      puts "Unfortunately, your company doesn't exist in our database. Please reboot the program and choose create an account."
+      puts "Unfortunately, your company doesn't exist in our database. Please reboot and create an account from the entry menu."
+      # entry_menu
       exit
     end
     company
@@ -30,17 +31,18 @@ class CLI
   def username_and_password_check
     company = get_company
     if company == nil
+      # puts "Why is this happening?"
       exit
     end
     if get_username_and_test_validity(company)
       if get_password_and_test_validity(company)
       else
-        puts "That is not the correct password, please restart the program and try again."
-        exit 
+        puts "That is not the correct password, please try again."
+        entry_menu
       end
     else 
-      puts "That is not the correct username, please restart the program and try again."
-      exit
+      puts "That is not the correct username, please try again."
+      entry_menu
     end
   end
 
@@ -218,8 +220,9 @@ class CLI
     prompt = TTY::Prompt.new
 
     menu_options = [
-      {"Sign in" => -> do username_and_password_check end },
-      {"Create an Account" => -> do create_new_company end }
+      { "Sign in" => -> do username_and_password_check end },
+      { "Create an Account" => -> do create_new_company end },
+      { "Exit" => -> do exit_message end }
     ]
     prompt.select("Sign in or create an account?", menu_options)
   end
