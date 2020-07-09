@@ -7,7 +7,6 @@ class CLI
     company = Company.find_by(name: company_name)
     if company == nil
       puts "Unfortunately, your company doesn't exist in our database. Please reboot and create an account from the entry menu."
-      # entry_menu
       exit
     end
     company
@@ -31,7 +30,6 @@ class CLI
   def username_and_password_check
     company = get_company
     if company == nil
-      # puts "Why is this happening?"
       exit
     end
     if get_username_and_test_validity(company)
